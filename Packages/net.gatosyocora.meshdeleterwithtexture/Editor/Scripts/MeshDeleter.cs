@@ -84,35 +84,35 @@ namespace Gatosyocora.MeshDeleterWithTexture
             {
                 throw new ArgumentException("isDeletePositions and (textureSize.x * textureSize.y) are not same size");
             }
-        
+
             var deleteIndexList = new SortedSet<int>();
-        
+
             for (int i = 0; i < uvs.Count(); i++)
             {
                 var u = uvs[i].x < 0 ? 1f - Mathf.Abs(uvs[i].x % 1.0f) : uvs[i].x % 1.0f;
                 var v = uvs[i].y < 0 ? 1f - Mathf.Abs(uvs[i].y % 1.0f) : uvs[i].y % 1.0f;
-        
+
                 var x = (int)(u * textureSize.x);
                 var y = (int)(v * textureSize.y);
-        
+
                 if (x == textureSize.x || y == textureSize.y) continue;
-        
+
                 int index = y * textureSize.x + x;
-        
+
                 if (isDeletePositions[index])
                 {
                     deleteIndexList.Add(i);
                 }
             }
-        
+
             var preservedIndexList = new SortedSet<int>();
-        
+
             for (int i = 0; i < triangles.Length; i += 3)
             {
                 var t0 = triangles[i];
                 var t1 = triangles[i + 1];
                 var t2 = triangles[i + 2];
-        
+
                 // if any of the vertices are not in the delete list, preserve the triangle's vertices
                 // 削除リストにない頂点がある場合、その三角形の頂点を保持します
                 if (!deleteIndexList.Contains(t0) ||
@@ -124,14 +124,14 @@ namespace Gatosyocora.MeshDeleterWithTexture
                     preservedIndexList.Add(t2);
                 }
             }
-        
+
             // Remove the preserved indices from the delete list
             // 保存されたindexを削除リストから削除します
             foreach (var index in preservedIndexList)
             {
                 deleteIndexList.Remove(index);
             }
-        
+
             return deleteIndexList.ToList();
         }
 
